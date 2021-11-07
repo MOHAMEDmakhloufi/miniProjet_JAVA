@@ -6,25 +6,27 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
-import driving_school.connections_with_data_file.ConnectionWithDataCandidate;
+import driving_school.connections_with_data_file.ConnectionWithDataPerson;
 import driving_school.entites.Candidate;
+import driving_school.entites.Instructor;
+import driving_school.entites.Person;
 
 
-public class CandidateService {
+public class PersonService {
 	/**
 	 * Candidate management (crud)
 	 * @throws Exception 
 	 */
-	public static void managment() throws Exception {
+	public static void managment(String nameOfClass) throws Exception {
 		Scanner sc = new Scanner(System.in);
 		int take;
 		
 		do {
-			System.out.println("\t\t1.Add Candidate");
-			System.out.println("\t\t2.Update Candidate");
-			System.out.println("\t\t3.Delete Candidate");
-			System.out.println("\t\t4.Search Candidate");
-			System.out.println("\t\t5.consult all the candidates");
+			System.out.println("\t\t1.Add "+nameOfClass);
+			System.out.println("\t\t2.Update "+nameOfClass);
+			System.out.println("\t\t3.Delete "+nameOfClass);
+			System.out.println("\t\t4.Search "+nameOfClass);
+			System.out.println("\t\t5.consult all the "+nameOfClass+"s");
 			System.out.println("\t\t0.RETOUR");
 			System.out.print("\t\t--> ");
 			take = sc.nextInt();
@@ -32,19 +34,19 @@ public class CandidateService {
 			
 			switch(take) {
 				case 1 : 
-					add();
+					add(nameOfClass);
 					break;
 				case 2 :
-					update();
+					update(nameOfClass);
 					break;
 				case 3 :
-					delete();
+					delete(nameOfClass);
 					break;
 				case 4 :
-					search();
+					search(nameOfClass);
 					break;
 				case 5 :
-					getAll();
+					getAll(nameOfClass);
 					break;
 				case 0 :
 					break;
@@ -55,12 +57,12 @@ public class CandidateService {
 	}
 	
 	/**
-	 * add a candidate by keyboard input
+	 * add a Person by keyboard input
 	 * @throws ParseException 
 	 */
-	public static void  add() throws Exception {
+	public static void  add(String nameOfClass) throws Exception {
 		Scanner sc = new Scanner(System.in);
-		System.out.println("\t\t\t-->Add New Candidate <--\n");
+		System.out.println("\t\t\t-->Add New "+nameOfClass+" <--\n");
 		//input Cin
 		System.out.print("\t\t\tCin_number --> ");
 		int cin= sc.nextInt();
@@ -87,9 +89,14 @@ public class CandidateService {
 		System.out.print("\t\t\tYear       --> ");
 		int year= sc.nextInt();
 		sc.nextLine();
+		
 		//input type A: moto, B: car, C: truck
-		System.out.print("\t\t\ttype  A: moto, B: car, C: truck  --> ");
-		String type = sc.nextLine();
+		String type="";
+		if(nameOfClass.equals("Candidate")) {
+			//input type A: moto, B: car, C: truck
+			System.out.print("\t\t\ttype  A: moto, B: car, C: truck  --> ");
+			type = sc.nextLine();}
+		
 		//input paidAmount
 		System.out.print("\t\t\tAdvence Payment --> ");
 		double advencePayment= sc.nextDouble();
@@ -99,25 +106,29 @@ public class CandidateService {
 		String sDate1=String.valueOf(day)+"/"+String.valueOf(month)+"/"+String.valueOf(year);  
         Date date1=new SimpleDateFormat("dd/MM/yyyy").parse(sDate1);
         
-        //creat new candidate
-		Candidate  candidate = new Candidate(cin, name, phoneNumber, email, date1, type, advencePayment);
+        //creat new person
+        Person person;
+        if(nameOfClass.equals("Candidate"))
+        	person = new Candidate(cin, name, phoneNumber, email, date1, type, advencePayment);
+        else
+        	person = new Instructor(cin, name, phoneNumber, email, date1, advencePayment);
 		
-		ConnectionWithDataCandidate.add(candidate);
+		ConnectionWithDataPerson.add(person);
 	}
 	
 	/**
-	 * update a candidate by keyboard input
+	 * update a Person by keyboard input
 	 * @throws Exception 
 	 */
-	public static void update() throws Exception {
+	public static void update(String nameOfClass) throws Exception {
 		Scanner sc = new Scanner(System.in);
-		System.out.println("\t\t\t-->Update Candidate <--\n");
+		System.out.println("\t\t\t-->Update "+nameOfClass+" <--\n");
 		//input Cin
 		System.out.print("\t\t\tCin_number --> ");
 		int cin= sc.nextInt();
 		sc.nextLine();
-		Candidate candidate = ConnectionWithDataCandidate.search(cin);
-		if(candidate != null) {
+		Person person = ConnectionWithDataPerson.search(cin, nameOfClass);
+		if(person != null) {
 			int take_;
 			do {
 				System.out.println("\t\t\t\t1.Set Cin");
@@ -139,14 +150,14 @@ public class CandidateService {
 						int newCin= sc.nextInt();
 						sc.nextLine();
 						//set
-						candidate.setCin(newCin);
+						person.setCin(newCin);
 						break;
 					case 2 :
 						//input Name
 						System.out.print("\t\t\t\t\tName 	   --> ");
 						String name= sc.nextLine();
 						//set
-						candidate.setName(name);
+						person.setName(name);
 						break;
 					case 3 :
 						//input Phone
@@ -154,14 +165,14 @@ public class CandidateService {
 						long phoneNumber= sc.nextLong();
 						sc.nextLine();
 						//set
-						candidate.setPhoneNumber(phoneNumber);
+						person.setPhoneNumber(phoneNumber);
 						break;
 					case 4 :
 						//input email
 						System.out.print("\t\t\t\t\tEmailAddress--> ");
 						String email= sc.nextLine();
 						//set
-						candidate.setEmailAddress(email);
+						person.setEmailAddress(email);
 						break;
 					case 5 :
 						//input dateOfBirthday
@@ -180,14 +191,14 @@ public class CandidateService {
 						String sDate1=String.valueOf(day)+"/"+String.valueOf(month)+"/"+String.valueOf(year);  
 				        Date date1=new SimpleDateFormat("dd/MM/yyyy").parse(sDate1);
 				        //set
-				        candidate.setDateOfBirthday(date1);
+				        person.setDateOfBirthday(date1);
 						break;
 					case 6 :
 						//input type A: moto, B: car, C: truck
 						System.out.print("\t\t\t\t\ttype  A: moto, B: car, C: truck  --> ");
 						String type = sc.nextLine();
 						//set
-						candidate.setCategory(type);
+						((Candidate)person).setCategory(type);
 						break;
 					case 7 :
 						//input paidAmount
@@ -195,7 +206,7 @@ public class CandidateService {
 						double paidAmount= sc.nextDouble();
 						sc.nextLine();
 						//set
-						candidate.setPaidAmount(paidAmount + candidate.getPaidAmount());
+						person.setPaidAmount(paidAmount + person.getPaidAmount());
 						break;
 					case 0 :
 						break;
@@ -204,55 +215,55 @@ public class CandidateService {
 				}
 			}while(take_ !=0);
 			//save this update
-			ConnectionWithDataCandidate.updateByCin(cin, candidate );
+			ConnectionWithDataPerson.updateByCin(cin, person );
 		}else
 			System.out.println("\t\t\t\t***notFound***");
 	}
 	
 	/**
-	 * Delete a candidate by keyboard input
+	 * Delete a Person by keyboard input
 	 */
 	
-	public static void delete() {
+	public static void delete(String nameOfClass) {
 		Scanner sc = new Scanner(System.in);
-		System.out.println("\t\t\t-->Delete Candidate <--\n");
+		System.out.println("\t\t\t-->Delete "+nameOfClass+" <--\n");
 		//input Cin
 		System.out.print("\t\t\tCin_number --> ");
 		int cin= sc.nextInt();
 		sc.nextLine();
 		//delete and test
-		if( ConnectionWithDataCandidate.delete(cin) )
+		if( ConnectionWithDataPerson.delete(cin, nameOfClass) )
 			System.out.println("\t\t\t--> delete successfully <--");
 		else 
 			System.out.println("\t\t\t***erreur***");
 	}
 	
 	/**
-	 * search a candidate by keyboard input
+	 * search a Person by keyboard input
 	 */
-	public static void search() {
+	public static void search(String nameOfClass) {
 		Scanner sc = new Scanner(System.in);
-		System.out.println("\t\t\t-->Search Candidate <--\n");
+		System.out.println("\t\t\t-->Search "+nameOfClass+" <--\n");
 		//input Cin
 		System.out.print("\t\t\tCin_number --> ");
 		int cin= sc.nextInt();
 		sc.nextLine();
-		Candidate candidate = ConnectionWithDataCandidate.search(cin);
-		if(candidate != null)
-			System.out.println(candidate);
+		Person person = ConnectionWithDataPerson.search(cin, nameOfClass);
+		if(person != null)
+			System.out.println(person);
 		else
 			System.out.println("\t\t\t\t***notFound***");
 	}
 	
 	/**
-	 * consult all the candidates
+	 * consult all the Persons
 	 */
-	public static void getAll() {
-		System.out.println("\t\t\t-->consult all the candidates <--\n");
+	public static void getAll(String nameOfClass) {
+		System.out.println("\t\t\t-->consult all the "+nameOfClass+"s <--\n");
 		
-		ArrayList<Candidate> candidateList = ConnectionWithDataCandidate.getAll();
-		if(candidateList != null)
-			for (Candidate can : candidateList)
+		ArrayList<Person> personList = ConnectionWithDataPerson.getAll(nameOfClass);
+		if(personList != null)
+			for (Person can : personList)
 				System.out.println(can);
 		else
 			System.out.println("\t\t\t\t***File Empty***");

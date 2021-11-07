@@ -1,19 +1,20 @@
 package driving_school.entites;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public abstract class Vehicle {
 	
 	protected long id;
-	protected String type;
-	protected Date date;
+	protected String name;
+	protected Date theDateOfPurchase;
 	protected double totalMileage;
 	protected double nextUpkeep;
-	protected double mileageRemains;
-	public Vehicle(long id, String type, Date date) {
+	//protected double mileageRemains;
+	public Vehicle(long id, String name, Date theDateOfPurchase) {
 		this.id = id;
-		this.type = type;
-		this.date = date;
+		this.name = name;
+		this.theDateOfPurchase = theDateOfPurchase;
 	}
 	public long getId() {
 		return id;
@@ -21,22 +22,29 @@ public abstract class Vehicle {
 	public void setId(long id) {
 		this.id = id;
 	}
-	public String getType() {
-		return type;
+	public String getName() {
+		return name;
 	}
-	public void setType(String type) {
-		this.type = type;
+	public void setName(String name) {
+		this.name = name;
 	}
-	public Date getDate() {
-		return date;
+	public Date getTheDateOfPurchase() {
+		return theDateOfPurchase;
 	}
-	public void setDate(Date date) {
-		this.date = date;
+	public void setTheDateOfPurchase(Date theDateOfPurchase) {
+		this.theDateOfPurchase = theDateOfPurchase;
 	}
-	public void setTotalMileage(double totalMileage) {
-		this.totalMileage = totalMileage;
+	//format date dd/mm/yyyy
+	private String formatDate() {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		return sdf.format(this.theDateOfPurchase);
 	}
-	
+	@Override 
+	public String toString() {
+		return     "\t\t\t\tId              : "+this.id
+				+"\n\t\t\t\tName             : "+this.name
+				+"\n\t\t\t\ttheDateOfPurchase : "+formatDate();
+	}
 
 	
 	

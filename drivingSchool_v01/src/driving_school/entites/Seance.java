@@ -1,29 +1,25 @@
 package driving_school.entites;
 
-import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public abstract class Seance {
 	
-	protected long id;
+
 	protected long cinI;
 	protected long cinC;
 	protected Date date; // day, month, year and hours
 	protected double priceForInstructor;
 	protected double priceForCandidate;
 	
-	public Seance(long id, long cinI, long cinC, Date date) {
-		this.id = id;
+	public Seance(long cinI, long cinC, Date date) {
+
 		this.cinI = cinI;
 		this.cinC = cinC;
 
 		this.date = date;
 	}
-	public long getId() {
-		return id;
-	}
-	public void setId(long id) {
-		this.id = id;
-	}
+
 	public long getCinI() {
 		return cinI;
 	}
@@ -42,7 +38,22 @@ public abstract class Seance {
 	public void setDate(Date date) {
 		this.date = date;
 	}
-
 	
+	//format date dd/mm/yyyy HH:mm
+	private String formatDate() {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		return sdf.format(this.date);
+	}
+	
+	
+	@Override 
+	public String toString() {
+		return     "\t\t\t\tDate              		   : "+formatDate()
+				+"\n\t\t\t\tCin Instructor             : "+this.cinI
+				+"\n\t\t\t\tCin Candidate              : "+this.cinC;
+	}
+	public abstract double priceForInstructor();
+	
+	public abstract double priceForCandidate();
 	
 }

@@ -1,13 +1,13 @@
 package driving_school.entites;
 
-import java.sql.Date;
+import java.util.Date;
 
 public class SeanceDriving extends Seance{
 
 	protected long idVehicle;
 
-	public SeanceDriving(long id, long cinI, long cinC, Date date, long idVehicle) {
-		super(id, cinI, cinC, date);
+	public SeanceDriving(long cinI, long cinC, Date date, long idVehicle) {
+		super(cinI, cinC, date);
 		this.idVehicle = idVehicle;
 	}
 
@@ -17,6 +17,21 @@ public class SeanceDriving extends Seance{
 
 	public void setIdVehicle(long idVehicle) {
 		this.idVehicle = idVehicle;
+	}
+	@Override
+	public String toString() {
+		return super.toString()+"\n\t\t\t\tId Vehicle	 : "+ this.idVehicle+"\n";
+	}
+	
+	@Override
+	public double priceForInstructor() {
+		return 10;
+	}
+
+	@Override
+	public double priceForCandidate() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 

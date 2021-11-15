@@ -8,15 +8,6 @@ public class SeanceCode extends Seance {
 		super( cinI, cinC, date);
 	}
 
-	@Override
-	public double priceForInstructor() {
-		return 7;
-	}
-
-	@Override
-	public double priceForCandidate() {
-		return 0;
-	}
 
 
 

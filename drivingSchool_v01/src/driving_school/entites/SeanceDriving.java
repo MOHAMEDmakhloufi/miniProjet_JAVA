@@ -20,19 +20,9 @@ public class SeanceDriving extends Seance{
 	}
 	@Override
 	public String toString() {
-		return super.toString()+"\n\t\t\t\tId Vehicle	 : "+ this.idVehicle+"\n";
+		return super.toString()+"\n\t\t\t\tId Vehicle	 	   : "+ this.idVehicle+"\n";
 	}
 	
-	@Override
-	public double priceForInstructor() {
-		return 10;
-	}
-
-	@Override
-	public double priceForCandidate() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 
 
 

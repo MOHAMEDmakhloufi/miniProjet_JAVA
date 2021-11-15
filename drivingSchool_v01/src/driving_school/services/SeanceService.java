@@ -2,6 +2,7 @@ package driving_school.services;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -13,6 +14,11 @@ import driving_school.entites.Person;
 import driving_school.entites.Seance;
 import driving_school.entites.SeanceCode;
 import driving_school.entites.SeanceDriving;
+import driving_school.exception.NotDispoException;
+import driving_school.exception.NotFoundException;
+import driving_school.exception.SaturdayException;
+import driving_school.gui.PersonGUI;
+import driving_school.gui.SeanceGUI;
 
 public class SeanceService {
 	/**
@@ -27,7 +33,8 @@ public class SeanceService {
 			System.out.println("\t\t2.Update "+nameOfClass);
 			System.out.println("\t\t3.Delete "+nameOfClass);
 			System.out.println("\t\t4.Search "+nameOfClass);
-			System.out.println("\t\t5.consult all the "+nameOfClass+"s");
+			System.out.println("\t\t5.Display "+nameOfClass+" By date dd/yy/aaaa");
+			System.out.println("\t\t6.consult all the "+nameOfClass+"s");
 			System.out.println("\t\t0.RETOUR");
 			System.out.print("\t\t--> ");
 			take = Integer.parseInt(sc.nextLine());
@@ -46,12 +53,15 @@ public class SeanceService {
 					search(nameOfClass);
 					break;
 				case 5 :
-					getAll();
+					getByDateDay(nameOfClass);
+					break;
+				case 6 :
+					getAll(nameOfClass);
 					break;
 				case 0 :
 					break;
 				default : 
-					System.out.println("\t\t--|take 0 or 1 or 2 or 3 or 4 |-- ");
+					System.out.println("\t\t--|take 0 or 1 or 2 or 3 or 4 or 5 or 6 |-- ");
 			}
 		}while(take != 0);
 	}
@@ -59,57 +69,48 @@ public class SeanceService {
 	 * add a seance by keyboard input
 	 */
 	public static void  add(String nameOfClass) {
-		Scanner sc = new Scanner(System.in);
+		
 		System.out.println("\t\t\t-->Add New "+nameOfClass+" <--\n");
-		//input CinI
-		System.out.print("\t\t\tCinInstructor --> ");
-		long cinI= sc.nextLong();
-		sc.nextLine();
-		//input CinC
-		System.out.print("\t\t\tCinCandidate --> ");
-		long cinC= sc.nextLong();
-		sc.nextLine();
-		//input idVehicle
-		long idVehicle = 0;
-		if(nameOfClass.equals("SeanceDriving")) {
-			
-			System.out.print("\t\t\tidVehicle ");
-			idVehicle = sc.nextLong();
-			sc.nextLine();}
-		//input date
-		System.out.println("\t\t\tdate : ");
-		
-		System.out.print("\t\t\tDay        --> ");
-		int day= sc.nextInt();
-		sc.nextLine();
-		System.out.print("\t\t\tMonth      --> ");
-		int month= sc.nextInt();
-		sc.nextLine();
-		System.out.print("\t\t\tYear       --> ");
-		int year= sc.nextInt();
-		sc.nextLine();
-		System.out.print("\t\t\tHours       --> ");
-		String hours= sc.nextLine();
-		
-		
-		//creat date
-		String sDate1=String.valueOf(day)+"/"+String.valueOf(month)+"/"+String.valueOf(year)+" "+hours;  
-        Date date1 = null;
 		try {
-			date1 = new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(sDate1);
-		} catch (ParseException e) {
+			//input CinI
+			long cinI;
+			cinI = SeanceGUI.inputCinTest("INSTRUCTOR NOT FOUND", "Instructor");
+	
+			//input CinC
+			long cinC= SeanceGUI.inputCinTest("Candidate NOT FOUND", "Candidate");
+	
+			//input idVehicle
+			long idVehicle = 0;
+			if(nameOfClass.equals("SeanceDriving")) {
+				Person can = ConnectionWithDataPerson.search(cinC, "Candidate");
+				String category= ((Candidate)can).getCategory();
+				if (category.equals("A"))
+					idVehicle = SeanceGUI.inputVehicleTest("Car");
+				else if(category.equals("B"))
+					idVehicle = SeanceGUI.inputVehicleTest("Moto");
+				else
+					idVehicle = SeanceGUI.inputVehicleTest("Truck");
+			}
+			//input date
+	        Date date1 = SeanceGUI.inputDate();
+	        SeanceGUI.testSaturday(date1);
+			ConnectionWithDataSeance.availability(date1, cinI, "cinI", "Instructor Not Available", nameOfClass);
+			ConnectionWithDataSeance.availability(date1, cinC, "cinC", "Candidate Not Available", nameOfClass);
+			ConnectionWithDataSeance.availability(date1, idVehicle, "idVehicle", "Vehicle Not Available", nameOfClass);
+	        //creat new Seance
+	        Seance seance = (nameOfClass.equals("SeanceDriving"))? new SeanceDriving(cinI, cinC, date1, idVehicle) : new SeanceCode(cinI, cinC, date1);
+			
+			ConnectionWithDataSeance.add(seance);
+		} catch (NotDispoException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("\t\t\t"+e.getMessage());
+		}catch (NotFoundException e1) {
+			System.out.println("\t\t\t"+e1.getMessage());
+		}catch (SaturdayException e2) {
+			System.out.println("\t\t\t"+e2.getMessage());
 		}
-        
-        //creat new Seance
-        Seance seance;
-        if(nameOfClass.equals("SeanceDriving"))
-        	seance = new SeanceDriving(cinI, cinC, date1, idVehicle);
-        else
-        	seance = new SeanceCode(cinI, cinC, date1);
-		
-		ConnectionWithDataSeance.add(seance);
+
+    
 	}
 	
 	/**
@@ -118,119 +119,91 @@ public class SeanceService {
 	public static void update(String nameOfClass) {
 		Scanner sc = new Scanner(System.in);
 		System.out.println("\t\t\t-->Update "+nameOfClass+" <--\n");
+		
 		//input CinI
-		System.out.print("\t\t\tCin Instructor --> ");
-		long cinI= sc.nextLong();
-		sc.nextLine();
+		long cinI= SeanceGUI.inputCin("Instructor");
 		
 		//input date
-		System.out.println("\t\t\tdate : ");
-		
-		System.out.print("\t\t\tDay        --> ");
-		int day= sc.nextInt();
-		sc.nextLine();
-		System.out.print("\t\t\tMonth      --> ");
-		int month= sc.nextInt();
-		sc.nextLine();
-		System.out.print("\t\t\tYear       --> ");
-		int year= sc.nextInt();
-		sc.nextLine();
-		System.out.print("\t\t\tHours       --> ");
-		String hours= sc.nextLine();
-		
-		
-		//creat date
-		String sDate1=String.valueOf(day)+"/"+String.valueOf(month)+"/"+String.valueOf(year)+" "+hours;  
-        Date date1 = null;
-		try {
-			date1 = new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(sDate1);
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+		Date date1 = SeanceGUI.inputDate();
 		
 		Seance seance = ConnectionWithDataSeance.getByDateAndCinI(date1, cinI, nameOfClass);
 		
 		if(seance != null) {
-			int take_;
+			int take_ = 0;
 			do {
-				System.out.println("\t\t\t\t1.Set CinI");
-				System.out.println("\t\t\t\t2.Set CinC");
-				System.out.println("\t\t\t\t3.Set Date");
-				if(nameOfClass.equals("SeanceDriving"))
-					System.out.println("\t\t\t\t4.Set IdVehicle");
-				System.out.println("\t\t\t\t0.FINISH");
-				System.out.print("\t\t\t\t--> ");
-				take_ = sc.nextInt();
-				sc.nextLine();
-				
-				switch(take_) {
-					case 1 : 
-						//input CinI
-						System.out.print("\t\t\t\t\tCin Instructor --> ");
-						long newCinI= sc.nextLong();
-						sc.nextLine();
-						//set
-						seance.setCinI(newCinI);
-						break;
-					case 2 :
-						//input CinI
-						System.out.print("\t\t\t\t\tCin Candidate --> ");
-						long newCinC= sc.nextLong();
-						sc.nextLine();
-						//set
-						seance.setCinC(newCinC);
-						break;
-					case 3 :
-						//input date
-						System.out.println("\t\t\t\t\tdate : ");
-						
-						System.out.print("\t\t\t\t\tDay        --> ");
-						int newday= sc.nextInt();
-						sc.nextLine();
-						System.out.print("\t\t\t\t\tMonth      --> ");
-						int newmonth= sc.nextInt();
-						sc.nextLine();
-						System.out.print("\t\t\t\t\tYear       --> ");
-						int newyear= sc.nextInt();
-						sc.nextLine();
-						System.out.print("\t\t\t\t\tHours       --> ");
-						String newhours= sc.nextLine();
-						
-						
-						//creat date
-						String newsDate1=String.valueOf(newday)+"/"+String.valueOf(newmonth)+"/"+String.valueOf(newyear)+" "+newhours;  
-				        Date newdate = null;
-						try {
-							newdate = new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(newsDate1);
-						} catch (ParseException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						//set
-						seance.setDate(newdate);
-						break;
-					case 4 : 
-						if(nameOfClass.equals("SeanceDriving")) {
-							System.out.print("\t\t\t\t\tidVehicle ");
-							long newIdVehicle = sc.nextLong();
-							sc.nextLine();
+				try {
+					System.out.println("\t\t\t\t1.Set CinI");
+					System.out.println("\t\t\t\t2.Set CinC");
+					System.out.println("\t\t\t\t3.Set Date");
+					if(nameOfClass.equals("SeanceDriving"))
+						System.out.println("\t\t\t\t4.Set IdVehicle ");
+					System.out.println("\t\t\t\t0.FINISH");
+					System.out.print("\t\t\t\t--> ");
+					take_ = sc.nextInt();
+					sc.nextLine();
+					
+					switch(take_) {
+						case 1 : 
+							//input CinI
+							long newCinI= SeanceGUI.inputCinTest("INSTRUCTOR NOT FOUND", "Instructor");
+							ConnectionWithDataSeance.availability(date1, newCinI, "cinI", "Instructor Not Available", nameOfClass);
 							//set
-							((SeanceDriving)seance).setIdVehicle(newIdVehicle);
-						}
-						else System.out.println("\t\t\t\t--|take 0 or 1 or 2 or 3|-- ");
-					case 0 :
-						break;
-					default : 
-						System.out.println("\t\t\t\t--|take 0 or 1 or 2 or 3|-- ");
-				}
+							seance.setCinI(newCinI);
+							break;
+						case 2 :
+							//input CinC
+							long newCinC= SeanceGUI.inputCinTest("Candidate NOT FOUND", "Candidate");
+							ConnectionWithDataSeance.availability(date1, newCinC, "cinC", "Candidate Not Available", nameOfClass);
+							//set
+							seance.setCinC(newCinC);
+							break;
+						case 3 :
+							//input date 
+					        Date newdate = SeanceGUI.inputDate();
+					        SeanceGUI.testSaturday(newdate);
+							ConnectionWithDataSeance.availability(newdate, cinI, "cinI", "Instructor Not Available", nameOfClass);
+							ConnectionWithDataSeance.availability(newdate, seance.getCinC(), "cinC", "Candidate Not Available", nameOfClass);
+							if(nameOfClass.equals("SeanceDriving"))
+								ConnectionWithDataSeance.availability(newdate, ((SeanceDriving)seance).getIdVehicle(), "idVehicle", "Vehicle Not Available", nameOfClass);
+							//set
+							seance.setDate(newdate);
+							break;
+						case 4 : 
+							if(nameOfClass.equals("SeanceDriving")) {
+								
+								Person can = ConnectionWithDataPerson.search(((SeanceDriving)seance).getCinC(), "Candidate");
+								String category= ((Candidate)can).getCategory();
+								long newIdVehicle;
+								if (category.equals("A"))
+									newIdVehicle = SeanceGUI.inputVehicleTest("Car");
+								else if(category.equals("B"))
+									newIdVehicle = SeanceGUI.inputVehicleTest("Moto");
+								else
+									newIdVehicle = SeanceGUI.inputVehicleTest("Truck");
+								ConnectionWithDataSeance.availability(date1, newIdVehicle, "idVehicle", "Vehicle Not Available", nameOfClass);
+								//set
+								((SeanceDriving)seance).setIdVehicle(newIdVehicle);
+							}
+							else System.out.println("\t\t\t\t--|take 0 or 1 or 2 or 3|-- ");
+						case 0 :
+							break;
+						default : 
+							System.out.println("\t\t\t\t--|take 0 or 1 or 2 or 3|-- ");
+					}
+				} catch (NotDispoException e) {
+					// TODO Auto-generated catch block
+					System.out.println("\t\t\t"+e.getMessage());
+				}catch (NotFoundException e1) {
+					System.out.println("\t\t\t"+e1.getMessage());
+				}catch (SaturdayException e2) {
+					System.out.println("\t\t\t"+e2.getMessage());
+				}	
 			}while(take_ !=0);
 			//save this update
 			
 			ConnectionWithDataSeance.updateByDateAndIdInstructor(date1, cinI, seance );
 		}else
-			System.out.println("\t\t\t\t***notFound***");
+			System.out.println("\t\t\t\t/!\\_notFound_/!\\");
 	}
 	
 	/**
@@ -241,92 +214,64 @@ public class SeanceService {
 		Scanner sc = new Scanner(System.in);
 		System.out.println("\t\t\t-->Delete "+nameOfClass+" <--\n");
 		//input CinI
-		System.out.print("\t\t\tCin Instructor --> ");
-		long cinI= sc.nextLong();
-		sc.nextLine();
-		
+		long cinI= SeanceGUI.inputCin("Instructor");
+
 		//input date
-		System.out.println("\t\t\tdate : ");
-		
-		System.out.print("\t\t\tDay        --> ");
-		int day= sc.nextInt();
-		sc.nextLine();
-		System.out.print("\t\t\tMonth      --> ");
-		int month= sc.nextInt();
-		sc.nextLine();
-		System.out.print("\t\t\tYear       --> ");
-		int year= sc.nextInt();
-		sc.nextLine();
-		System.out.print("\t\t\tHours       --> ");
-		String hours= sc.nextLine();
-		
-		
-		//creat date
-		String sDate1=String.valueOf(day)+"/"+String.valueOf(month)+"/"+String.valueOf(year)+" "+hours;  
-        Date date1 = null;
-		try {
-			date1 = new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(sDate1);
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+        Date date1 = SeanceGUI.inputDate();
+        
+        System.out.print("\t\t\t\tAre you sure to delete this Seance Y/N -->");
+		String check =PersonGUI.inputCheck();
+		if (check.equals("Y")) {
 		//delete and test
 		if( ConnectionWithDataSeance.delete(date1, cinI, nameOfClass) )
 			System.out.println("\t\t\t--> delete successfully <--");
 		else 
-			System.out.println("\t\t\t***erreur***");
+			System.out.println("\t\t\t/!\\_DELETE ERREUR_/!\\");
+		}
 	}
 	
 	/**
 	 * search a seance by keyboard input
 	 */
 	public static void search(String nameOfClass) {
-		Scanner sc = new Scanner(System.in);
 		System.out.println("\t\t\t-->Search "+nameOfClass+" <--\n");
 
 		//input CinI
-		System.out.print("\t\t\tCin Instructor --> ");
-		long cinI= sc.nextLong();
-		sc.nextLine();
+		long cinI= SeanceGUI.inputCin("Instructor");
 		
 		//input date
-		System.out.println("\t\t\tdate : ");
-		
-		System.out.print("\t\t\tDay        --> ");
-		int day= sc.nextInt();
-		sc.nextLine();
-		System.out.print("\t\t\tMonth      --> ");
-		int month= sc.nextInt();
-		sc.nextLine();
-		System.out.print("\t\t\tYear       --> ");
-		int year= sc.nextInt();
-		sc.nextLine();
-		System.out.print("\t\t\tHours       --> ");
-		String hours= sc.nextLine();
-		
-		
-		//creat date
-		String sDate1=String.valueOf(day)+"/"+String.valueOf(month)+"/"+String.valueOf(year)+" "+hours;  
-        Date date1 = null;
-		try {
-			date1 = new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(sDate1);
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        Date date1 = SeanceGUI.inputDate();
 		
 		Seance seance = ConnectionWithDataSeance.getByDateAndCinI(date1, cinI, nameOfClass);
 		if(seance != null)
 			System.out.println(seance);
 		else
-			System.out.println("\t\t\t\t***notFound***");
+			System.out.println("\t\t\t\t/!\\_notFound_/!\\");
 	}
-	
+	public static void getByDateDay(String nameOfClass){
+		System.out.println("\t\t\t-->Display "+nameOfClass+" By date dd/yy/aaaa <--\n");
+		
+		//input date
+        Date date = SeanceGUI.inputDateDay();
+        
+		ArrayList<Seance> seanceList = ConnectionWithDataSeance.getByDateDay(date, nameOfClass);
+		if(seanceList != null)
+			for (Seance sea : seanceList)
+				System.out.println(sea);
+		else
+			System.out.println("\t\t\t\t/!\\_Day Empty/!\\");
+	}
 	/**
 	 * consult all the seances
 	 */
-	public static void getAll() {
+	public static void getAll(String nameOfClass) {
+		System.out.println("\t\t\t-->consult all the "+nameOfClass+"s <--\n");
 		
+		ArrayList<Seance> seanceList = ConnectionWithDataSeance.getAll(nameOfClass);
+		if(seanceList != null)
+			for (Seance sea : seanceList)
+				System.out.println(sea);
+		else
+			System.out.println("\t\t\t\t/!\\_File Empty/!\\");
 	}
 }

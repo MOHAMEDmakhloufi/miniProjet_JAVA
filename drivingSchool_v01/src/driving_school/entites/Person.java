@@ -1,5 +1,6 @@
 package driving_school.entites;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -10,7 +11,7 @@ public abstract class Person {
 	protected long phoneNumber;
 	protected String emailAddress;
 	protected Date dateOfBirthday;
-	protected double totalAmount;
+
 	protected double paidAmount;
 	protected double remainingAmount;
 	
@@ -21,6 +22,7 @@ public abstract class Person {
 		this.phoneNumber = phoneNumber;
 		this.emailAddress = emailAddress;
 		this.dateOfBirthday = dateOfBirthday;
+		this.paidAmount = paidAmount;
 	}
 
 
@@ -83,10 +85,6 @@ public abstract class Person {
 		this.paidAmount = paidAmount;
 	}
 
-
-	public void setTotalAmount(double totalAmount) {
-		this.totalAmount = totalAmount;
-	}
 	
 	//format date dd/mm/yyyy
 	private String formatDate() {
@@ -96,17 +94,14 @@ public abstract class Person {
 	
 	@Override 
 	public String toString() {
+		DecimalFormat df = new DecimalFormat("0.00");
+		
 		return     "\t\t\t\tCin              : "+this.cin
 				+"\n\t\t\t\tName             : "+this.name
 				+"\n\t\t\t\tDate Of Birthday : "+formatDate()
 				+"\n\t\t\t\tPhone number     : "+this.phoneNumber
-				+"\n\t\t\t\tEmail Address    : "+this.emailAddress;
+				+"\n\t\t\t\tEmail Address    : "+this.emailAddress
+				+"\n\t\t\t\tPaidAmount	 : "+  df.format(this.paidAmount)+" dt";
 	}
 
-	/**
-	 * consult All the Seances By person
-	 */
-	public abstract void listSeance();
-	
-	
 }

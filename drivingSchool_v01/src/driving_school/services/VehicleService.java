@@ -8,6 +8,7 @@ import java.util.Scanner;
 
 import driving_school.connections_with_data_file.ConnectionWithDataPerson;
 import driving_school.connections_with_data_file.ConnectionWithDataVehicle;
+import driving_school.entites.Buisiness;
 import driving_school.entites.Candidate;
 import driving_school.entites.Car;
 import driving_school.entites.Instructor;
@@ -15,41 +16,43 @@ import driving_school.entites.Moto;
 import driving_school.entites.Person;
 import driving_school.entites.Truck;
 import driving_school.entites.Vehicle;
+import driving_school.gui.PersonGUI;
+import driving_school.gui.VehicleGUI;
 
 public class VehicleService {
 	
 	/**
 	 * vehicle management (crud)
 	 */
-	public static void managment() throws Exception {
+	public static void managment(String nameOfClass) {
 		Scanner sc = new Scanner(System.in);
 		int take;
 		
 		do {
-			System.out.println("\t\t1.Add vehicle");
-			System.out.println("\t\t2.Update vehicle");
-			System.out.println("\t\t3.Delete vehicle");
-			System.out.println("\t\t4.Search vehicle");
-			System.out.println("\t\t5.consult all the vehicles");
+			System.out.println("\t\t1.Add "+nameOfClass);
+			System.out.println("\t\t2.Update "+nameOfClass);
+			System.out.println("\t\t3.Delete "+nameOfClass);
+			System.out.println("\t\t4.Search "+nameOfClass);
+			System.out.println("\t\t5.consult all the "+nameOfClass+"s");
 			System.out.println("\t\t0.RETOUR");
 			System.out.print("\t\t--> ");
 			take = Integer.parseInt(sc.nextLine());
 			
 			switch(take) {
 				case 1 : 
-					add();
+					add(nameOfClass);
 					break;
 				case 2 :
-					update();
+					update(nameOfClass);
 					break;
 				case 3 :
-					delete();
+					delete(nameOfClass);
 					break;
 				case 4 :
-					search();
+					search(nameOfClass);
 					break;
 				case 5 :
-					getAll();
+					getAll(nameOfClass);
 					break;
 				case 0 :
 					break;
@@ -62,60 +65,21 @@ public class VehicleService {
 	 * add a Vehicle by keyboard input
 	 * @throws ParseException 
 	 */
-	public static void  add() throws Exception {
-		String nameOfClass="";
+	public static void  add(String nameOfClass) {
+		
 		Scanner sc = new Scanner(System.in);
-		int take;
+
 		
-		do {
-			System.out.println("\t\t\t1.Add Car");
-			System.out.println("\t\t\t2.Add Moto");
-			System.out.println("\t\t\t3.Add Truck");
-			System.out.print("\t\t\t--> ");
-			take = Integer.parseInt(sc.nextLine());
-			
-			switch(take) {
-			case 1 : 
-				nameOfClass = "Car";
-				
-				break;
-			case 2 :
-				nameOfClass = "Moto";
-				
-				break;
-			case 3 :
-				nameOfClass = "Truck";
-				break;
-				default : 
-					System.out.println("\t\t\t--|take 0 or 1 or 2 or 3 |-- ");
-			}
-		}while(take != 1 && take != 2 && take != 3);
-		
-		System.out.println("\t\t\t\t-->Add New "+nameOfClass+" <--\n");
+		System.out.println("\t\t\t-->Add New "+nameOfClass+" <--\n");
 		//input Id
-		System.out.print("\t\t\t\tId --> ");
-		int id= sc.nextInt();
-		sc.nextLine();
+		
+		int id= VehicleGUI.inputId();
 		//input Name
-		System.out.print("\t\t\t\tName 	   --> ");
-		String name= sc.nextLine();
+		
+		String name= VehicleGUI.inputName();
 		//input theDateOfPurchase
-		System.out.println("\t\t\t\ttheDateOfPurchase : ");
-		
-		System.out.print("\t\t\t\tDay        --> ");
-		int day= sc.nextInt();
-		sc.nextLine();
-		System.out.print("\t\t\t\tMonth      --> ");
-		int month= sc.nextInt();
-		sc.nextLine();
-		System.out.print("\t\t\t\tYear       --> ");
-		int year= sc.nextInt();
-		sc.nextLine();
-		
-		
-		//creat date
-		String sDate1=String.valueOf(day)+"/"+String.valueOf(month)+"/"+String.valueOf(year);  
-        Date date1=new SimpleDateFormat("dd/MM/yyyy").parse(sDate1);
+
+        Date date1= VehicleGUI.inputDateOfPurchase();
         
         //creat new person
         Vehicle vehicle;
@@ -132,45 +96,22 @@ public class VehicleService {
 	 * update a Vehicle by keyboard input
 	 * @throws Exception 
 	 */
-	public static void update() throws Exception {
-		String nameOfClass="";
+	public static void update(String nameOfClass) {
+		
 		Scanner sc = new Scanner(System.in);
 		int take;
 		
-		do {
-			System.out.println("\t\t\t1.Update Car");
-			System.out.println("\t\t\t2.Update Moto");
-			System.out.println("\t\t\t3.Update Truck");
-			System.out.print("\t\t\t--> ");
-			take = Integer.parseInt(sc.nextLine());
-			
-			switch(take) {
-			case 1 : 
-				nameOfClass = "Car";
-				take = 0;
-				break;
-			case 2 :
-				nameOfClass = "Moto";
-				take = 0;
-				break;
-			case 3 :
-				nameOfClass = "Truck";
-				take = 0;
-				break;
-				default : 
-					System.out.println("\t\t\t--|take 0 or 1 or 2 or 3 |-- ");
-			}
-		}while(take != 0);
-		System.out.println("\t\t\t\t-->Update "+nameOfClass+" <--\n");
-		//input id
-		System.out.print("\t\t\t\tId --> ");
-		int id= sc.nextInt();
-		sc.nextLine();
+
+		System.out.println("\t\t\t-->Update "+nameOfClass+" <--\n");
+		
+		//input Id
+		int id= VehicleGUI.inputId();
+		
 		Vehicle vehicle = ConnectionWithDataVehicle.search(id, nameOfClass);
 		if(vehicle != null) {
 			int take_;
 			do {
-				System.out.println("\t\t\t\t1.Set Id");
+				System.out.println("\t\t\t\t.Set Id");
 				System.out.println("\t\t\t\t2.Set Name");
 				System.out.println("\t\t\t\t3.Set TheDateOfPurchase");
 				System.out.println("\t\t\t\t0.FINISH");
@@ -181,35 +122,21 @@ public class VehicleService {
 				switch(take_) {
 					case 1 : 
 						//input Id
-						System.out.print("\t\t\t\t\tId --> ");
-						int newId= sc.nextInt();
-						sc.nextLine();
+						System.out.print("\t\t");
+						int newId= VehicleGUI.inputId();
 						//set
 						vehicle.setId(newId);
 						break;
 					case 2 :
 						//input Name
-						System.out.print("\t\t\t\t\tName 	   --> ");
-						String name= sc.nextLine();
+						System.out.print("\t\t");
+						String name=  VehicleGUI.inputName();
 						//set
 						vehicle.setName(name);
 						break;
 					case 3 :
-						//input theDateOfPurchase
-						System.out.println("\t\t\t\t\theDateOfPurchase : ");
-						
-						System.out.print("\t\t\t\t\tDay        --> ");
-						int day= sc.nextInt();
-						sc.nextLine();
-						System.out.print("\t\t\t\t\tMonth      --> ");
-						int month= sc.nextInt();
-						sc.nextLine();
-						System.out.print("\t\t\t\t\tYear       --> ");
-						int year= sc.nextInt();
-						sc.nextLine();
-						//creat date
-						String sDate1=String.valueOf(day)+"/"+String.valueOf(month)+"/"+String.valueOf(year);  
-				        Date date1=new SimpleDateFormat("dd/MM/yyyy").parse(sDate1);
+						//input theDateOfPurchase  
+				        Date date1= VehicleGUI.inputDateOfPurchase();
 				        //set
 				        vehicle.setTheDateOfPurchase(date1);
 						break;
@@ -222,139 +149,95 @@ public class VehicleService {
 			//save this update
 			ConnectionWithDataVehicle.updateById(id, vehicle);
 		}else
-			System.out.println("\t\t\t\t***notFound***");
+			System.out.println("\t\t\t\t/!\\_notFound_/!\\");
 	}
 	
 	/**
 	 * Delete a Vehicle by keyboard input
 	 */
 	
-	public static void delete() {
-		String nameOfClass="";
+	public static void delete(String nameOfClass) {
+		
 		Scanner sc = new Scanner(System.in);
-		int take;
+
 		
-		do {
-			System.out.println("\t\t\t1.Delete Car");
-			System.out.println("\t\t\t2.Delete Moto");
-			System.out.println("\t\t\t3.Delete Truck");
-			System.out.println("\t\t\t0.RETOUR");
-			System.out.print("\t\t\t--> ");
-			take = Integer.parseInt(sc.nextLine());
-			
-			switch(take) {
-			case 1 : 
-				nameOfClass = "Car";
-				
-				break;
-			case 2 :
-				nameOfClass = "Moto";
-				
-				break;
-			case 3 :
-				nameOfClass = "Truck";
-				break;
-				default : 
-					System.out.println("\t\t\t--|take 0 or 1 or 2 or 3 |-- ");
-			}
-		}while(take != 1 && take != 2 && take != 3);
-		
-		System.out.println("\t\t\t\t-->Delete "+nameOfClass+" <--\n");
+		System.out.println("\t\t\t-->Delete "+nameOfClass+" <--\n");
 		//input Id
-		System.out.print("\t\t\t\tId --> ");
-		int id= sc.nextInt();
-		sc.nextLine();
-		//delete and test
-		if( ConnectionWithDataVehicle.delete(id, nameOfClass) )
-			System.out.println("\t\t\t\t--> delete successfully <--");
-		else 
-			System.out.println("\t\t\t\t***erreur***");
+		int id= VehicleGUI.inputId();
+		
+        System.out.print("\t\t\tAre you sure to delete this Seance Y/N -->");
+		String check =VehicleGUI.inputCheck();
+		if (check.equals("Y")) {
+			//delete and test
+			if( ConnectionWithDataVehicle.delete(id, nameOfClass) )
+				System.out.println("\t\t\t--> delete successfully <--");
+			else 
+				System.out.println("\t\t\t/!\\_DELETE erreur_/!\\");
+		}
 	}
 	
 	/**
 	 * search a Vehicle by keyboard input
 	 */
-	public static void search() {
-		String nameOfClass="";
+	public static void search(String nameOfClass) {
+		
 		Scanner sc = new Scanner(System.in);
 		int take;
 		
-		do {
-			System.out.println("\t\t\t1.search Car");
-			System.out.println("\t\t\t2.search Moto");
-			System.out.println("\t\t\t3.search Truck");
-			System.out.println("\t\t\t0.RETOUR");
-			System.out.print("\t\t\t--> ");
-			take = Integer.parseInt(sc.nextLine());
-			
-			switch(take) {
-			case 1 : 
-				nameOfClass = "Car";
-				
-				break;
-			case 2 :
-				nameOfClass = "Moto";
-				
-				break;
-			case 3 :
-				nameOfClass = "Truck";
-				break;
-				default : 
-					System.out.println("\t\t\t--|take 0 or 1 or 2 or 3 |-- ");
-			}
-		}while(take != 1 && take != 2 && take != 3);
-		
-		System.out.println("\t\t\t\t-->Search "+nameOfClass+" <--\n");
+		System.out.println("\t\t\t-->Search "+nameOfClass+" <--\n");
 		//input Id
-		System.out.print("\t\t\t\tId --> ");
-		int id= sc.nextInt();
-		sc.nextLine();
+		int id= VehicleGUI.inputId();
+		
 		Vehicle vehicle = ConnectionWithDataVehicle.search(id, nameOfClass);
-		if(vehicle != null)
+		if(vehicle != null) {
 			System.out.println(vehicle);
-		else
-			System.out.println("\t\t\t\t***notFound***");
+		
+			int take_;
+			do {
+				System.out.println("\t\t\t\t\t1.Display All Seance Driving");
+				System.out.println("\t\t\t\t\t2.Display Next SeanceDriving");
+				System.out.println("\t\t\t\t\t3.Display Previous SeanceDriving");
+				System.out.println("\t\t\t\t\t0.FINISH");
+				System.out.print("\t\t\t\t--> ");
+				take_ = sc.nextInt();
+				sc.nextLine();
+				
+				switch(take_) {
+					case 1 :
+						vehicle.consultAllSeanceDriving();
+						break;
+					case 2 :
+						vehicle.consultNextSeanceDriving();
+						break;
+					case 3 :
+						vehicle.consultPreviousSeanceDriving();
+					case 0 :
+						break;
+					default : 
+						System.out.println("\t\t\t\t--|take 0 or 1 or 2 or 3 |-- ");
+				}
+			}while(take_ !=0);
+		}else
+			System.out.println("\t\t\t/!\\_notFound_/!\\");
 	}
 	
 	/**
 	 * consult all the vehicles
 	 */
-	public static void getAll() {
-		String nameOfClass="";
+	public static void getAll(String nameOfClass) {
+		
 		Scanner sc = new Scanner(System.in);
 		int take;
-		
-		do {
-			System.out.println("\t\t\t1.consult all Car");
-			System.out.println("\t\t\t2.consult all Moto");
-			System.out.println("\t\t\t3.consult all Truck");
 
-			System.out.print("\t\t\t--> ");
-			take = Integer.parseInt(sc.nextLine());
-			
-			switch(take) {
-			case 1 : 
-				nameOfClass = "Car";
-				
-				break;
-			case 2 :
-				nameOfClass = "Moto";
-				
-				break;
-			case 3 :
-				nameOfClass = "Truck";
-				break;
-				default : 
-					System.out.println("\t\t\t--|take 0 or 1 or 2 or 3 |-- ");
-			}
-		}while(take != 1 && take != 2 && take != 3);
-		System.out.println("\t\t\t\t-->consult all the "+nameOfClass+"s <--\n");
+		System.out.println("\t\t\t-->consult all the "+nameOfClass+"s <--\n");
 		
 		ArrayList<Vehicle> vehicleList = ConnectionWithDataVehicle.getAll(nameOfClass);
 		if(vehicleList != null)
 			for (Vehicle veh : vehicleList)
 				System.out.println(veh);
 		else
-			System.out.println("\t\t\t\t***File Empty***");
+			System.out.println("\t\t\t/!\\_File Empty_/!\\");
 	}
+	
+	
 }

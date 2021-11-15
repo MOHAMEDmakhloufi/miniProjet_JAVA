@@ -138,7 +138,7 @@ public class ConnectionWithDataPerson {
             
  
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ParseException e) {
@@ -227,7 +227,7 @@ public class ConnectionWithDataPerson {
             }
  
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        	System.out.println(e.getMessage());
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ParseException e) {
@@ -267,7 +267,7 @@ public class ConnectionWithDataPerson {
             return arrayList;
  
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        	System.out.println(e.getMessage());
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ParseException e) {
@@ -325,7 +325,7 @@ public class ConnectionWithDataPerson {
             
  
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        	System.out.println(e.getMessage());
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ParseException e) {

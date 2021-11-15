@@ -30,7 +30,7 @@ public class ConnectionWithDataVehicle {
 		//JSON parser object to parse read file
         JSONParser jsonParser = new JSONParser();
          
-        try (FileReader reader = new FileReader(".\\src\\datafile\\Vehicle.json"))
+        try (FileReader reader = new FileReader(".\\src\\datafile\\"+nameofClass+".json"))
         {
             //Read JSON file
             Object obj = jsonParser.parse(reader);
@@ -49,7 +49,7 @@ public class ConnectionWithDataVehicle {
             //close file
             reader.close();
             //WriteJsonFile
-            try(FileWriter file = new FileWriter(".\\src\\datafile\\Vehicle.json")){
+            try(FileWriter file = new FileWriter(".\\src\\datafile\\"+nameofClass+".json")){
                 file.write(vehicleList.toJSONString());
                 file.flush();
                  
@@ -70,7 +70,7 @@ public class ConnectionWithDataVehicle {
             	System.out.println("\t\t\t--> add successfully <--");
             
             //WriteJsonFile
-            try(FileWriter file = new FileWriter(".\\src\\datafile\\Vehicle.json")){
+            try(FileWriter file = new FileWriter(".\\src\\datafile\\"+nameofClass+".json")){
                 file.write(vehicleList.toJSONString());
                 file.flush();
                  
@@ -94,7 +94,7 @@ public class ConnectionWithDataVehicle {
 		//JSON parser object to parse read file
         JSONParser jsonParser = new JSONParser();
          
-        try (FileReader reader = new FileReader(".\\src\\datafile\\Vehicle.json"))
+        try (FileReader reader = new FileReader(".\\src\\datafile\\"+nameofClass+".json"))
         {
             //Read JSON file
             Object obj = jsonParser.parse(reader);
@@ -129,7 +129,7 @@ public class ConnectionWithDataVehicle {
                 //close file
                 reader.close();
                 //WriteJsonFile
-                try(FileWriter file = new FileWriter(".\\src\\datafile\\Vehicle.json")){
+                try(FileWriter file = new FileWriter(".\\src\\datafile\\"+nameofClass+".json")){
                     file.write(vehicleList.toJSONString());
                     file.flush();
                     
@@ -139,7 +139,7 @@ public class ConnectionWithDataVehicle {
            
  
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        	System.out.println(e.getMessage());
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ParseException e) {
@@ -200,7 +200,7 @@ public class ConnectionWithDataVehicle {
 		//JSON parser object to parse read file
         JSONParser jsonParser = new JSONParser();
          
-        try (FileReader reader = new FileReader(".\\src\\datafile\\Vehicle.json"))
+        try (FileReader reader = new FileReader(".\\src\\datafile\\"+nameofClass+".json"))
         {
             //Read JSON file
             Object obj = jsonParser.parse(reader);
@@ -223,7 +223,7 @@ public class ConnectionWithDataVehicle {
             }
  
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        	System.out.println(e.getMessage());
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ParseException e) {
@@ -234,7 +234,7 @@ public class ConnectionWithDataVehicle {
 	/**
 	 * getAll Vehicles
 	 */
-	public static ArrayList<Vehicle> getAll(String nameofCalss){
+	public static ArrayList<Vehicle> getAll(String nameofClass){
 		
 		
 		//declaration for ArrayList<Vehicle>
@@ -242,7 +242,7 @@ public class ConnectionWithDataVehicle {
 		//JSON parser object to parse read file
         JSONParser jsonParser = new JSONParser();
          
-        try (FileReader reader = new FileReader(".\\src\\datafile\\Vehicle.json"))
+        try (FileReader reader = new FileReader(".\\src\\datafile\\"+nameofClass+".json"))
         {
             //Read JSON file
             Object obj = jsonParser.parse(reader);
@@ -256,14 +256,14 @@ public class ConnectionWithDataVehicle {
             for(Object veh : vehicleList) {
             	//get vehicle
             	JSONObject vehicleObject = (JSONObject)veh;
-            	vehicleObject = (JSONObject)vehicleObject.get(nameofCalss);
+            	vehicleObject = (JSONObject)vehicleObject.get(nameofClass);
             	if (vehicleObject != null) 
-            		arrayList.add(castJOtoVehicle(vehicleObject, nameofCalss));
+            		arrayList.add(castJOtoVehicle(vehicleObject, nameofClass));
             }
             return arrayList;
  
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        	System.out.println(e.getMessage());
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ParseException e) {
@@ -275,14 +275,14 @@ public class ConnectionWithDataVehicle {
 	/**
 	 * Delete Person By Cin
 	 */
-	public static boolean delete(long id, String nameofCalss){
+	public static boolean delete(long id, String nameofClass){
 		
 		long ind = 0;
 		boolean deleteTest = false;
 		//JSON parser object to parse read file
         JSONParser jsonParser = new JSONParser();
          
-        try (FileReader reader = new FileReader(".\\src\\datafile\\Vehicle.json"))
+        try (FileReader reader = new FileReader(".\\src\\datafile\\"+nameofClass+".json"))
         {
             //Read JSON file
             Object obj = jsonParser.parse(reader);
@@ -297,7 +297,7 @@ public class ConnectionWithDataVehicle {
             for(Object veh : vehicleList) {
             	//get Person
             	JSONObject vehicleObject = (JSONObject)veh;
-            	vehicleObject = (JSONObject)vehicleObject.get(nameofCalss);
+            	vehicleObject = (JSONObject)vehicleObject.get(nameofClass);
             	//test
             	
             	if (vehicleObject != null) {
@@ -314,7 +314,7 @@ public class ConnectionWithDataVehicle {
                 //close file
                 //reader.close();
                 //WriteJsonFile
-                try(FileWriter file = new FileWriter(".\\src\\datafile\\Vehicle.json")){
+                try(FileWriter file = new FileWriter(".\\src\\datafile\\"+nameofClass+".json")){
                     file.write(vehicleList.toJSONString());
                     file.flush();
                     return deleteTest && true;
@@ -324,7 +324,7 @@ public class ConnectionWithDataVehicle {
             
  
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        	System.out.println(e.getMessage());
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ParseException e) {

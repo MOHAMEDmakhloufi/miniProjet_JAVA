@@ -9,8 +9,7 @@ public abstract class Seance {
 	protected long cinI;
 	protected long cinC;
 	protected Date date; // day, month, year and hours
-	protected double priceForInstructor;
-	protected double priceForCandidate;
+
 	
 	public Seance(long cinI, long cinC, Date date) {
 
@@ -48,12 +47,9 @@ public abstract class Seance {
 	
 	@Override 
 	public String toString() {
-		return     "\t\t\t\tDate              		   : "+formatDate()
+		return     "\n\t\t\t\tDate              : "+formatDate()
 				+"\n\t\t\t\tCin Instructor             : "+this.cinI
 				+"\n\t\t\t\tCin Candidate              : "+this.cinC;
 	}
-	public abstract double priceForInstructor();
-	
-	public abstract double priceForCandidate();
 	
 }

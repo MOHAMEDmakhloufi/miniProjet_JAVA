@@ -232,9 +232,11 @@ public class PersonService {
 				System.out.println("\t\t\t\t\t1.Display All SeanceCode");
 				System.out.println("\t\t\t\t\t2.Display Next SeanceCode");
 				System.out.println("\t\t\t\t\t3.Display Previous SeanceCode");
-				System.out.println("\t\t\t\t\t4.Display All Seance Driving");
-				System.out.println("\t\t\t\t\t5.Display Next SeanceDriving");
-				System.out.println("\t\t\t\t\t6.Display Previous SeanceDriving");
+				System.out.println("\t\t\t\t\t4.Display ExamCode");
+				System.out.println("\t\t\t\t\t5.Display All Seance Driving");
+				System.out.println("\t\t\t\t\t6.Display Next SeanceDriving");
+				System.out.println("\t\t\t\t\t7.Display Previous SeanceDriving");
+				System.out.println("\t\t\t\t\t8.Display ExamDriving");
 				System.out.println("\t\t\t\t\t0.FINISH");
 				System.out.print("\t\t\t\t--> ");
 				take_ = sc.nextInt();
@@ -251,13 +253,22 @@ public class PersonService {
 						((Buisiness)person).consultPreviousSeanceCode();
 						break;
 					case 4 :
-						((Buisiness)person).consultAllSeanceDriving();
+						if(person instanceof Candidate)
+							((Candidate)person).consultExamCode();
+						else
+							System.out.println("\t\t\t\t--|take 0 or 1 or 2 or 3  or 5 or 6 |-- ");
 						break;
 					case 5 :
-						((Buisiness)person).consultNextSeanceDriving();
+						((Buisiness)person).consultAllSeanceDriving();
 						break;
 					case 6 :
+						((Buisiness)person).consultNextSeanceDriving();
+						break;
+					case 7 :
 						((Buisiness)person).consultPreviousSeanceDriving();
+					case 8 :
+						((Buisiness)person).consultExamDriving();
+						break;
 					case 0 :
 						break;
 					default : 

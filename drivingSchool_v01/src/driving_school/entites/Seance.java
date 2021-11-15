@@ -3,6 +3,8 @@ package driving_school.entites;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import driving_school.connections_with_data_file.ConnectionWithDataPerson;
+
 public abstract class Seance {
 	
 
@@ -47,9 +49,16 @@ public abstract class Seance {
 	
 	@Override 
 	public String toString() {
+		//name Candidate
+		Person can = ConnectionWithDataPerson.search(cinC, "Candidate");
+		String nameCandidate= (can != null)?can.getName(): "";
+		//name instructor
+		Person ins = ConnectionWithDataPerson.search(cinI, "Instructor");
+		String nameInstructor= (ins != null)?ins.getName(): "";
+		
 		return     "\n\t\t\t\tDate              : "+formatDate()
-				+"\n\t\t\t\tCin Instructor             : "+this.cinI
-				+"\n\t\t\t\tCin Candidate              : "+this.cinC;
+				+"\n\t\t\t\t Instructor             : "+this.cinI+" "+nameInstructor
+				+"\n\t\t\t\t Candidate              : "+this.cinC+" "+nameCandidate;
 	}
 	
 }

@@ -2,6 +2,9 @@ package driving_school.entites;
 
 import java.util.Date;
 
+import driving_school.connections_with_data_file.ConnectionWithDataPerson;
+import driving_school.connections_with_data_file.ConnectionWithDataVehicle;
+
 public class SeanceDriving extends Seance{
 
 	protected long idVehicle;
@@ -20,7 +23,12 @@ public class SeanceDriving extends Seance{
 	}
 	@Override
 	public String toString() {
-		return super.toString()+"\n\t\t\t\tId Vehicle	 	   : "+ this.idVehicle+"\n";
+		//name vehicle
+		String nameVehicle = (ConnectionWithDataVehicle.search(idVehicle, "Car")!= null)?ConnectionWithDataVehicle.search(idVehicle, "Car").getName():
+			(ConnectionWithDataVehicle.search(idVehicle, "Moto")!= null)?ConnectionWithDataVehicle.search(idVehicle, "Moto").getName():
+				( ConnectionWithDataVehicle.search(idVehicle, "Truck")!=null)?ConnectionWithDataVehicle.search(idVehicle, "Truck").getName(): "";
+		
+		return super.toString()+"\n\t\t\t\t Vehicle	 	   : "+ this.idVehicle+" "+nameVehicle+"\n";
 	}
 	
 

@@ -7,6 +7,8 @@ import driving_school.gui.SettingGUI;
 public class Setting {
 	
 	public static double basePriceForCandidate = 15;//dt
+	public static double priceExamForCandidate = 50;//dt
+
 	public static double priceSeanceCodeForInstructor = 7;//dt
 	public static double priceSeanceDrivingForInstructor = 10;//dt
 	public static double seanceLength = 120; // min
@@ -23,6 +25,7 @@ public class Setting {
 			System.out.println("\t\t4.set seanceLength");
 			System.out.println("\t\t5.set mileageOfSeance");
 			System.out.println("\t\t6.set maximumMileage");
+			System.out.println("\t\t7.set priceExamForCandidate");
 			System.out.println("\t\t0.RETOUR");
 			System.out.print("\t\t--> ");
 			take = sc.nextInt();
@@ -65,6 +68,11 @@ public class Setting {
 					double m2 = SettingGUI.inputNumber();
 					setMaximumMileage(m2);
 					break;
+				case 7 :
+					System.out.print("\t\t\tpriceExamForCandidate -->");
+					double l3 = SettingGUI.inputNumber();
+					setPriceExamForCandidate(l3);
+					break;
 				case 0 :
 					break;
 				default : 
@@ -90,7 +98,9 @@ public class Setting {
 	public static void setMaximumMileage(double maximumMileage) {
 		Setting.maximumMileage = maximumMileage;
 	}
-	
+	public static void setPriceExamForCandidate(double priceExamForCandidate) {
+		Setting.priceExamForCandidate = priceExamForCandidate;
+	}
 	
 	
 	

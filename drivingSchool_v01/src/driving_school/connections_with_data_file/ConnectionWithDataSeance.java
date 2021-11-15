@@ -323,7 +323,7 @@ public class ConnectionWithDataSeance {
             
             //test if file empty or not
              if(seanceList.isEmpty())
-            	 return null;
+            	 return arrayList;
             //Iterate over Person array
             for(Object sea : seanceList) {
             	//get Seance 
@@ -341,7 +341,7 @@ public class ConnectionWithDataSeance {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-		return null;
+		return arrayList;
 	}
 	/**
 	 * with  a parameter idInstructor, return the seanceDriving or seanceCode
@@ -365,7 +365,7 @@ public class ConnectionWithDataSeance {
             
             //test if file empty or not
              if(seanceList.isEmpty())
-            	 return null;
+            	 return arrayList;
             //Iterate over Person array
             for(Object sea : seanceList) {
             	//get Seance 
@@ -383,7 +383,7 @@ public class ConnectionWithDataSeance {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-		return null;
+		return arrayList;
 	}
 	
 	/**
@@ -407,7 +407,7 @@ public class ConnectionWithDataSeance {
             
             //test if file empty or not
              if(seanceList.isEmpty())
-            	 return null;
+            	 return arrayList;
             //Iterate over Person array
             for(Object sea : seanceList) {
             	//get Seance 
@@ -425,7 +425,7 @@ public class ConnectionWithDataSeance {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-		return null;
+		return arrayList;
 	}
 	/**
 	 * with a parameters dateDay, return the seanceDriving or seanceCode
@@ -448,7 +448,7 @@ public class ConnectionWithDataSeance {
             
             //test if file empty or not
              if(seanceList.isEmpty())
-            	 return null;
+            	 return arrayList;
             //Iterate over Person array
             for(Object sea : seanceList) {
             	//get Seance 
@@ -480,7 +480,7 @@ public class ConnectionWithDataSeance {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-		return null;
+		return arrayList;
 	}
 	/**
 	 * without parameters, returns all seanceDriving or seanceCode
@@ -503,7 +503,7 @@ public class ConnectionWithDataSeance {
             
             //test if file empty or not
              if(seanceList.isEmpty())
-            	 return null;
+            	 return arrayList;
             //Iterate over Person array
             for(Object sea : seanceList) {
             	//get Seance 
@@ -522,7 +522,7 @@ public class ConnectionWithDataSeance {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-		return null;
+		return arrayList;
 	}
 	
 	// test availability 

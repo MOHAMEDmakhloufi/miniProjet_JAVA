@@ -2,6 +2,7 @@ package driving_school;
 
 import java.util.Scanner;
 
+import driving_school.services.ExamService;
 import driving_school.services.PersonService;
 import driving_school.services.SeanceService;
 import driving_school.services.VehicleService;
@@ -27,7 +28,9 @@ public class Main {
 			System.out.println("\t5.Truck   management");
 			System.out.println("\t6.Seance Code   managment");
 			System.out.println("\t7.Seance Driving   managment");
-			System.out.println("\t8.Settings");
+			System.out.println("\t8.Exam Code   managment");
+			System.out.println("\t9.Exam Driving   managment");
+			System.out.println("\t10.Settings");
 			System.out.println("\t0.EXIT");
 			System.out.print("\t--> ");
 			
@@ -57,6 +60,12 @@ public class Main {
 					SeanceService.managment("SeanceDriving");
 					break;	
 				case 8 :
+					ExamService.managment("ExamCode");
+					break;
+				case 9 :
+					ExamService.managment("ExamDriving");
+					break;	
+				case 10 :
 					Setting.managment();
 					break;
 				case 0 :

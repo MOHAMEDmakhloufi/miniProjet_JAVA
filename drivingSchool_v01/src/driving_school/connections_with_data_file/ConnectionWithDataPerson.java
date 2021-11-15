@@ -255,7 +255,7 @@ public class ConnectionWithDataPerson {
             
             //test if file empty or not
              if(personList.isEmpty())
-            	 return null;
+            	 return arrayList;
             //Iterate over Person array
             for(Object per : personList) {
             	//get Person
@@ -273,7 +273,7 @@ public class ConnectionWithDataPerson {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-		return null;
+		return arrayList;
 	}
 	
 	/**

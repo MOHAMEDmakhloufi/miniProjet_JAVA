@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import driving_school.connections_with_data_file.ConnectionWithDataExam;
 import driving_school.connections_with_data_file.ConnectionWithDataSeance;
 import driving_school.date.MyDate;
 import driving_school.settings.Setting;
@@ -59,6 +60,13 @@ public class Candidate extends Person implements Buisiness {
 		else 
 			totalDriving = Setting.basePriceForCandidate + (Setting.basePriceForCandidate * 8 /(double) 100);
 		totalDriving *= listSeanceDriving.size();
+		
+		//exam Driving
+		if (ConnectionWithDataExam.search(cin, "ExamDriving")!= null)
+			totalDriving += Setting.priceExamForCandidate;
+		//exam Code
+		if (ConnectionWithDataExam.search(cin, "ExamCode")!= null)
+			totalCode += Setting.priceExamForCandidate;
 		
 		return totalCode  + totalDriving ;
 	}
@@ -117,5 +125,16 @@ public class Candidate extends Person implements Buisiness {
 			if ( !MyDate.testAfterOrBefore(sea.getDate()))
 			System.out.println("\t\t\t\t"+sea);
 		
+	}
+
+	@Override
+	public void consultExamDriving() {
+		Exam exam = ConnectionWithDataExam.search(cin, "ExamDriving");
+		System.out.println(exam);
+	}
+	
+	public void consultExamCode() {
+		Exam exam = ConnectionWithDataExam.search(cin, "ExamCode");
+		System.out.println(exam);
 	}
 }

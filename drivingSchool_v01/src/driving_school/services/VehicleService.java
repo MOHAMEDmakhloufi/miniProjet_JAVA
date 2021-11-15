@@ -197,6 +197,7 @@ public class VehicleService {
 				System.out.println("\t\t\t\t\t1.Display All Seance Driving");
 				System.out.println("\t\t\t\t\t2.Display Next SeanceDriving");
 				System.out.println("\t\t\t\t\t3.Display Previous SeanceDriving");
+				System.out.println("\t\t\t\t\t4.Display ExamsDriving");
 				System.out.println("\t\t\t\t\t0.FINISH");
 				System.out.print("\t\t\t\t--> ");
 				take_ = sc.nextInt();
@@ -211,6 +212,8 @@ public class VehicleService {
 						break;
 					case 3 :
 						vehicle.consultPreviousSeanceDriving();
+					case 4 :
+						vehicle.consultExamDriving();
 					case 0 :
 						break;
 					default : 

@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import driving_school.connections_with_data_file.ConnectionWithDataExam;
 import driving_school.connections_with_data_file.ConnectionWithDataSeance;
 import driving_school.date.MyDate;
 import driving_school.settings.Setting;
@@ -90,5 +91,11 @@ public abstract class Vehicle {
 			if ( !MyDate.testAfterOrBefore(sea.getDate()))
 			System.out.println("\t\t\t\t"+sea);
 		
+	}
+	
+	public void consultExamDriving() {
+		ArrayList<Exam> exams = ConnectionWithDataExam.getByIdVehicle(id);
+		for(Exam exam : exams)
+			System.out.println(exam);
 	}
 }

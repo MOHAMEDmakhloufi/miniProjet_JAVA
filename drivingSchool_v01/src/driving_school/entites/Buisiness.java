@@ -8,4 +8,5 @@ public interface Buisiness {
 	public void consultAllSeanceDriving();
 	public void consultNextSeanceDriving();
 	public void consultPreviousSeanceDriving();
+	public void consultExamDriving();
 }

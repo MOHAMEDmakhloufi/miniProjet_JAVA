@@ -1,26 +1,29 @@
 package driving_school.services;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
+import driving_school.connections_with_data_file.ConnectionWithDataExam;
 import driving_school.connections_with_data_file.ConnectionWithDataPerson;
 import driving_school.connections_with_data_file.ConnectionWithDataSeance;
 import driving_school.entites.Candidate;
-import driving_school.entites.Instructor;
+import driving_school.entites.Exam;
+import driving_school.entites.ExamCode;
+import driving_school.entites.ExamDriving;
 import driving_school.entites.Person;
 import driving_school.entites.Seance;
 import driving_school.entites.SeanceCode;
 import driving_school.entites.SeanceDriving;
 import driving_school.exception.NotDispoException;
 import driving_school.exception.NotFoundException;
+import driving_school.exception.PriorityException;
 import driving_school.exception.SaturdayException;
 import driving_school.gui.PersonGUI;
 import driving_school.gui.SeanceGUI;
 
-public class SeanceService {
+public class ExamService {
 	/**
 	 * Seance management (crud)
 	 */
@@ -66,41 +69,44 @@ public class SeanceService {
 		}while(take != 0);
 	}
 	/**
-	 * add a seance by keyboard input
+	 * add a Exam by keyboard input
 	 */
 	public static void  add(String nameOfClass) {
 		
 		System.out.println("\t\t\t-->Add New "+nameOfClass+" <--\n");
 		try {
-			//input CinI
-			long cinI;
-			cinI = SeanceGUI.inputCinTest("INSTRUCTOR NOT FOUND", "Instructor");
-	
 			//input CinC
 			long cinC= SeanceGUI.inputCinTest("Candidate NOT FOUND", "Candidate");
-	
-			//input idVehicle
+			
+			//input CinI and idVehicle
+			long cinI = 0;
 			long idVehicle = 0;
-			if(nameOfClass.equals("SeanceDriving")) {
+			if (nameOfClass.equals("ExamDriving")) {
+				examPriority(cinC);
+				cinI = SeanceGUI.inputCinTest("INSTRUCTOR NOT FOUND", "Instructor");
+				//input idVehicle
 				Person can = ConnectionWithDataPerson.search(cinC, "Candidate");
 				String category= ((Candidate)can).getCategory();
 				if (category.equals("A"))
-					idVehicle = SeanceGUI.inputVehicleTest("Moto");
-				else if(category.equals("B"))
 					idVehicle = SeanceGUI.inputVehicleTest("Car");
+				else if(category.equals("B"))
+					idVehicle = SeanceGUI.inputVehicleTest("Moto");
 				else
 					idVehicle = SeanceGUI.inputVehicleTest("Truck");
+				
 			}
+
+	
 			//input date
 	        Date date1 = SeanceGUI.inputDate();
 	        SeanceGUI.testSaturday(date1);
 			ConnectionWithDataSeance.availability(date1, cinI, "cinI", "Instructor Not Available", nameOfClass);
 			ConnectionWithDataSeance.availability(date1, cinC, "cinC", "Candidate Not Available", nameOfClass);
 			ConnectionWithDataSeance.availability(date1, idVehicle, "idVehicle", "Vehicle Not Available", nameOfClass);
-	        //creat new Seance
-	        Seance seance = (nameOfClass.equals("SeanceDriving"))? new SeanceDriving(cinI, cinC, date1, idVehicle) : new SeanceCode(cinI, cinC, date1);
+	        //creat new Exam
+	        Exam exam = (nameOfClass.equals("ExamDriving"))? new ExamDriving(cinC, false, date1, cinI) : new ExamCode(cinC, false, date1);
 			
-			ConnectionWithDataSeance.add(seance);
+			ConnectionWithDataExam.add(exam);
 		} catch (NotDispoException e) {
 			// TODO Auto-generated catch block
 			System.out.println("\t\t\t"+e.getMessage());
@@ -108,83 +114,100 @@ public class SeanceService {
 			System.out.println("\t\t\t"+e1.getMessage());
 		}catch (SaturdayException e2) {
 			System.out.println("\t\t\t"+e2.getMessage());
+		}catch (PriorityException e3) {
+			System.out.println("\t\t\t"+e3.getMessage());
 		}
 
-    
+		
 	}
 	
 	/**
-	 * update a seance by keyboard input
+	 * update a Exam by keyboard input
 	 */
 	public static void update(String nameOfClass) {
 		Scanner sc = new Scanner(System.in);
 		System.out.println("\t\t\t-->Update "+nameOfClass+" <--\n");
 		
-		//input CinI
-		long cinI= SeanceGUI.inputCin("Instructor");
+		//input CinC
+		long cinC= SeanceGUI.inputCin("Candidate");
 		
-		//input date
-		Date date1 = SeanceGUI.inputDate();
+		Exam exam = ConnectionWithDataExam.search(cinC, nameOfClass);
 		
-		Seance seance = ConnectionWithDataSeance.getByDateAndCinI(date1, cinI, nameOfClass);
-		
-		if(seance != null) {
+		if(exam != null) {
 			int take_ = 0;
 			do {
 				try {
-					System.out.println("\t\t\t\t1.Set CinI");
-					System.out.println("\t\t\t\t2.Set CinC");
+					
+					System.out.println("\t\t\t\t1.Set CinCandidate");
+					System.out.println("\t\t\t\t2.Set Validation ");
 					System.out.println("\t\t\t\t3.Set Date");
-					if(nameOfClass.equals("SeanceDriving"))
+					if(nameOfClass.equals("ExamDriving")) {
 						System.out.println("\t\t\t\t4.Set IdVehicle ");
+						System.out.println("\t\t\t\t5.Set CinInstructor");
+					}
+						
 					System.out.println("\t\t\t\t0.FINISH");
 					System.out.print("\t\t\t\t--> ");
 					take_ = sc.nextInt();
 					sc.nextLine();
 					
 					switch(take_) {
-						case 1 : 
-							//input CinI
-							long newCinI= SeanceGUI.inputCinTest("INSTRUCTOR NOT FOUND", "Instructor");
-							ConnectionWithDataSeance.availability(date1, newCinI, "cinI", "Instructor Not Available", nameOfClass);
-							//set
-							seance.setCinI(newCinI);
-							break;
-						case 2 :
+
+						case 1 :
 							//input CinC
 							long newCinC= SeanceGUI.inputCinTest("Candidate NOT FOUND", "Candidate");
-							ConnectionWithDataSeance.availability(date1, newCinC, "cinC", "Candidate Not Available", nameOfClass);
+							ConnectionWithDataSeance.availability(exam.getDate(), newCinC, "cinC", "Candidate Not Available", nameOfClass);
 							//set
-							seance.setCinC(newCinC);
+							exam.setCinCandidate(newCinC);
+							break;
+						case 2 : 
+							//input validation
+							System.out.print("\t\t\t\t\tValidation      -->");
+							Boolean newValidation= sc.nextBoolean();
+							sc.nextLine();
+							
+							//set
+							exam.setValidation(newValidation);
 							break;
 						case 3 :
 							//input date 
 					        Date newdate = SeanceGUI.inputDate();
+					        examPriority(cinC);
 					        SeanceGUI.testSaturday(newdate);
-							ConnectionWithDataSeance.availability(newdate, cinI, "cinI", "Instructor Not Available", nameOfClass);
-							ConnectionWithDataSeance.availability(newdate, seance.getCinC(), "cinC", "Candidate Not Available", nameOfClass);
-							if(nameOfClass.equals("SeanceDriving"))
-								ConnectionWithDataSeance.availability(newdate, ((SeanceDriving)seance).getIdVehicle(), "idVehicle", "Vehicle Not Available", nameOfClass);
+							ConnectionWithDataSeance.availability(newdate, cinC, "cinC", "Candidate Not Available", nameOfClass);
+							if(nameOfClass.equals("ExamDriving")) {
+								ConnectionWithDataSeance.availability(newdate, ((ExamDriving)exam).getIdVehicle(), "idVehicle", "Vehicle Not Available", nameOfClass);
+								ConnectionWithDataSeance.availability(newdate, ((ExamDriving)exam).getCinInstructor(), "cinI", "Instructor Not Available", nameOfClass);
+
+							}
 							//set
-							seance.setDate(newdate);
+							exam.setDate(newdate);
 							break;
 						case 4 : 
-							if(nameOfClass.equals("SeanceDriving")) {
-								
-								Person can = ConnectionWithDataPerson.search(((SeanceDriving)seance).getCinC(), "Candidate");
+							long newIdVehicle = 0;
+							if (nameOfClass.equals("ExamDriving")) {
+								//input idVehicle
+								Person can = ConnectionWithDataPerson.search(cinC, "Candidate");
 								String category= ((Candidate)can).getCategory();
-								long newIdVehicle;
 								if (category.equals("A"))
-									newIdVehicle = SeanceGUI.inputVehicleTest("Moto");
-								else if(category.equals("B"))
 									newIdVehicle = SeanceGUI.inputVehicleTest("Car");
+								else if(category.equals("B"))
+									newIdVehicle = SeanceGUI.inputVehicleTest("Moto");
 								else
 									newIdVehicle = SeanceGUI.inputVehicleTest("Truck");
-								ConnectionWithDataSeance.availability(date1, newIdVehicle, "idVehicle", "Vehicle Not Available", nameOfClass);
 								//set
-								((SeanceDriving)seance).setIdVehicle(newIdVehicle);
+								((ExamDriving)exam).setIdVehicle(newIdVehicle);
 							}
 							else System.out.println("\t\t\t\t--|take 0 or 1 or 2 or 3|-- ");
+						case 5 : 
+							//input CinI
+							long newCinI= 0;
+							if (nameOfClass.equals("ExamDriving")) {
+								newCinI= SeanceGUI.inputCinTest("INSTRUCTOR NOT FOUND", "Instructor");
+								ConnectionWithDataSeance.availability(exam.getDate(), newCinI, "cinI", "Instructor Not Available", nameOfClass);
+								//set
+								((ExamDriving)exam).setCinInstructor(newCinI);
+							}else System.out.println("\t\t\t\t--|take 0 or 1 or 2 or 3|-- ");
 							break;
 						case 0 :
 							break;
@@ -198,33 +221,35 @@ public class SeanceService {
 					System.out.println("\t\t\t"+e1.getMessage());
 				}catch (SaturdayException e2) {
 					System.out.println("\t\t\t"+e2.getMessage());
-				}	
+				}catch (PriorityException e3) {
+					System.out.println("\t\t\t"+e3.getMessage());
+				}catch(InputMismatchException e4) {
+					sc.nextLine();
+					System.out.println("\t\t\t"+e4.getMessage());
+				}
 			}while(take_ !=0);
 			//save this update
 			
-			ConnectionWithDataSeance.updateByDateAndIdInstructor(date1, cinI, seance );
+			ConnectionWithDataExam.updateByCin(cinC, exam );
 		}else
 			System.out.println("\t\t\t\t/!\\_notFound_/!\\");
 	}
 	
 	/**
-	 * Delete a seance by keyboard input
+	 * Delete a Exam by keyboard input
 	 */
 	
 	public static void delete(String nameOfClass) {
 		Scanner sc = new Scanner(System.in);
 		System.out.println("\t\t\t-->Delete "+nameOfClass+" <--\n");
-		//input CinI
-		long cinI= SeanceGUI.inputCin("Instructor");
-
-		//input date
-        Date date1 = SeanceGUI.inputDate();
+		//input CinC
+		long cinC= SeanceGUI.inputCin("Candidate");
         
-        System.out.print("\t\t\t\tAre you sure to delete this Seance Y/N -->");
+        System.out.print("\t\t\t\tAre you sure to delete this Exam Y/N -->");
 		String check =PersonGUI.inputCheck();
 		if (check.equals("Y")) {
 		//delete and test
-		if( ConnectionWithDataSeance.delete(date1, cinI, nameOfClass) )
+		if( ConnectionWithDataExam.delete(cinC, nameOfClass) )
 			System.out.println("\t\t\t--> delete successfully <--");
 		else 
 			System.out.println("\t\t\t/!\\_DELETE ERREUR_/!\\");
@@ -232,20 +257,18 @@ public class SeanceService {
 	}
 	
 	/**
-	 * search a seance by keyboard input
+	 * get by cin keyboard input
+	 * @param nameOfClass
 	 */
 	public static void search(String nameOfClass) {
 		System.out.println("\t\t\t-->Search "+nameOfClass+" <--\n");
 
-		//input CinI
-		long cinI= SeanceGUI.inputCin("Instructor");
+		//input CinC
+		long cinC= SeanceGUI.inputCin("Candidate");
 		
-		//input date
-        Date date1 = SeanceGUI.inputDate();
-		
-		Seance seance = ConnectionWithDataSeance.getByDateAndCinI(date1, cinI, nameOfClass);
-		if(seance != null)
-			System.out.println(seance);
+		Exam exam = ConnectionWithDataExam.search(cinC, nameOfClass);
+		if(exam != null)
+			System.out.println(exam);
 		else
 			System.out.println("\t\t\t\t/!\\_notFound_/!\\");
 	}
@@ -255,24 +278,33 @@ public class SeanceService {
 		//input date
         Date date = SeanceGUI.inputDateDay();
         
-		ArrayList<Seance> seanceList = ConnectionWithDataSeance.getByDateDay(date, nameOfClass);
-		if(seanceList != null)
-			for (Seance sea : seanceList)
-				System.out.println(sea);
+		ArrayList<Exam> examList = ConnectionWithDataExam.getByDateDay(date, nameOfClass);
+		if(examList != null)
+			for (Exam exam : examList)
+				System.out.println(exam);
 		else
 			System.out.println("\t\t\t\t/!\\_Day Empty/!\\");
 	}
 	/**
-	 * consult all the seances
+	 * display all Exams
+	 * @param nameOfClass
 	 */
 	public static void getAll(String nameOfClass) {
 		System.out.println("\t\t\t-->consult all the "+nameOfClass+"s <--\n");
 		
-		ArrayList<Seance> seanceList = ConnectionWithDataSeance.getAll(nameOfClass);
-		if(seanceList != null)
-			for (Seance sea : seanceList)
-				System.out.println(sea);
+		ArrayList<Exam> examList = ConnectionWithDataExam.getAll(nameOfClass);
+		if(examList != null)
+			for (Exam exam : examList)
+				System.out.println(exam);
 		else
 			System.out.println("\t\t\t\t/!\\_File Empty/!\\");
+	}
+	
+	private static void examPriority(long cinCandidate) throws PriorityException{
+		Exam examCode = ConnectionWithDataExam.search(cinCandidate, "ExamCode");
+		if( examCode == null)
+			throw new PriorityException("Exam code not exist");
+		else if (examCode.getValidation())
+			throw new PriorityException("Exam code not completed");
 	}
 }

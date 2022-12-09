@@ -1,5 +1,5 @@
 # miniProjet_JAVA
-Enseignants : T. BEN MENA Nb pages : 1
+Enseignants : Tarek. BEN MENA 
 MINI PROJET
 « Prête-moi ta voiture, j’ai eu mon permis ; Non j’ai peur pour ma voiture J »
 On vous demande d’implémenter une application de gestion d’une auto-école. Un(e) candidat(e)
